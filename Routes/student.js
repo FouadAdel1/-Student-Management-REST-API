@@ -6,5 +6,5 @@ studentRouter.route( '/students' )
               .put(studentController.updateStudnet)
               .delete(studentController.deleteStudnet);
 
-                studentRouter.route( '/students/:id' ).get(studentController.getStudnetById)
+                studentRouter.get('/students/:id',studentController.getStudnetById)
 module.exports  =  studentRouter;

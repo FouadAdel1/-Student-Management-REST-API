@@ -1,21 +1,69 @@
-const department =require('../Model/department');
+require('../Model/department');
+const departmentSchema = require('mongoose').model('departments')
 
-function getAllDepartments(req,res,next){
-  
-res.status(200).json({data:[]});
+async function getAllDepartments(req,res,next){
+    try {
+        let data = await departmentSchema.find({})
+        res.status(200).json({data});
+    } catch (error) {
+        next(error)
+    }
+
 }
-function addDepartment(req,res,next){
-    console.log(req.body);
-    console.log(req.query);
-    res.status(201).json({data:{}});
+async function addDepartment(req,res,next){
+    try {
+        let departemtns = req.body
+        departemtns.forEach(async(deprtment) => {
+            let {id, name, location}= deprtment;
+            let data = new departmentSchema({
+                id,name,location
+            })
+                await data.save()
+        });
+        res.status(201).json({message:'insert sucess'});
+    } catch (error) {
+        next(error)
+    }
+
 }
-function updateDepartment(req,res,next){
-    res.status(200).json({data:{}});
+async function updateDepartment(req,res,next){
+    try {
+        let result =   await departmentSchema.findOneAndUpdate({id:req.body.id},{
+            name:req.body.name,
+            location:req.body.location
+        },{new:true})
+        if (result) {
+            res.status(201).json(result);
+        } else {
+            throw new Error('this department not found');
+        }
+    } catch (error) {
+        next(error)
+    }
+
 }
-function deleteDepartment(req,res,next){
-    res.status(200).json({data:{}});
+async function deleteDepartment(req,res,next){
+    try {
+        let id = req.body.id
+        let result = await departmentSchema.findOneAndDelete({id})
+        if (result) {
+            res.status(201).json(result);
+        } else {
+            throw new Error('this department not found');
+        }
+    } catch (error) {
+        next(error)
+    }
+
 }
-function getDepartmentById(req,res,next){
-    res.status(200).json({data:{}});
+async function getDepartmentById(req,res,next){
+    try {
+        let  id = req.params.id
+        let result = await departmentSchema.findOne({id}).exec()
+        res.status(200).json(result);
+    } catch (error) {
+        next(error)
+    }
+
 }
 module.exports = {getAllDepartments,addDepartment,updateDepartment,deleteDepartment,getDepartmentById};

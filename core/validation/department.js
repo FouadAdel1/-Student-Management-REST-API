@@ -7,11 +7,9 @@ body('name')
 .withMessage('Name must be a string')
 .isLength({min:3})
 .withMessage('Name must be at least 3 characters long'),
-body('age')
+body('id')
 .isNumeric()
-.withMessage('age must be a number')
-.isLength({max:2})
-.withMessage('age must be at max 2 number long'),
+.withMessage('id must be a number'),
 body('location')
 .isAlpha()
 .withMessage('location must be a string')
@@ -20,19 +18,24 @@ body('location')
 ] ; 
 const updateDapartmentValidation=[
   body('name')
+.optional() // Makes 'name' optional
 .isAlpha()
 .withMessage('Name must be a string')
 .isLength({min:3})
 .withMessage('Name must be at least 3 characters long'),
-body('age')
+body('id')
 .isNumeric()
-.withMessage('age must be a number')
-.isLength({max:2})
-.withMessage('age must be at max 2 number long'),
+.withMessage('id must be a number'),
 body('location')
 .isAlpha()
 .withMessage('location must be a string')
 .isLength({min:3})
+.optional() // Makes 'name' optional
 .withMessage('location must be at least 3 characters long'),
 ]
-module.exports = {insertDapartmentValidation};
+const deleteDapartmentValidation=[
+body('id')
+.isNumeric()
+.withMessage('id must be a number'),
+]
+module.exports = {insertDapartmentValidation ,deleteDapartmentValidation ,updateDapartmentValidation};
