@@ -6,7 +6,9 @@ const {notFound}= require('./MiddleWare/notFound.js');
 const {errorHandle}= require('./MiddleWare/errorHandling.js');
 const departmentRoutes = require('./Routes/department.js');
 const studentRoutes = require('./Routes/student.js');
-
+const authRoutes=require("./Routes/auth.js")
+const {authinticationMW}= require('./MiddleWare/auth/auth.js');
+const studentController= require('./Controller/student.js')
 var fs = require('fs')
 var morgan = require('morgan')
 var path = require('path')
@@ -35,6 +37,9 @@ app.use(morgan('combined', { stream: accessLogStream }))
 // my own routes 
 // middle ware for authintication
 // middle ware for  authorization
+app.use(authRoutes)
+app.get('/students/:id',studentController.getStudnetById)
+app.use(authinticationMW)
 app.use( departmentRoutes);
 app.use( studentRoutes);
 
