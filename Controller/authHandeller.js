@@ -10,10 +10,10 @@ const loginHandeller =async  (req,res,next)=>{
   try {
     let {name , password}=req.body;
     let user = await studentSchema.findOne({name})
-    console.log(user);
     if(user){
       if(user.password==password){
         const data = jwt.sign({user},process.env.PRIVATE_KEY ,{expiresIn:'1h'})
+        req.session.user = user
         res.status(200).json({token:data , message:'login is sucess'})
       }else{
         throw new Error('password in not valid')
@@ -28,7 +28,6 @@ const loginHandeller =async  (req,res,next)=>{
 
 }
 const registerHandller = async (req,res,next)=>{
-console.log("register");
 try {
   let {id,name,password,departmentId,supervisore} =req.body
   let department = await departmentSchema.find({id:departmentId})

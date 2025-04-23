@@ -4,7 +4,13 @@ const departmentSchema = require('mongoose').model('departments')
 async function getAllDepartments(req,res,next){
     try {
         let data = await departmentSchema.find({})
-        res.status(200).json({data});
+        // res.cookie("key", data, {
+        //     signed: true, // 🔥 Signs the cookie
+        //     httpOnly: true, // Prevent access via JS (security)
+        //     sameSite: "Strict", // Helps prevent CSRF
+        //     maxAge: 1000 * 60 * 60, // 1 hour
+        //   });
+                res.status(200).json({data});
     } catch (error) {
         next(error)
     }
@@ -58,6 +64,8 @@ async function deleteDepartment(req,res,next){
 }
 async function getDepartmentById(req,res,next){
     try {
+        console.log(req.session);
+        console.log(req.session.id);
         let  id = req.params.id
         let result = await departmentSchema.findOne({id}).exec()
         res.status(200).json(result);

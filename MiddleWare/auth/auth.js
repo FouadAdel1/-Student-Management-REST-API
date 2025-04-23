@@ -34,12 +34,9 @@ const authinticationMW= (req,res,next)=>{
 }
 const refreshToken=(req,res,next)=>{
     try {
-      console.log( req.headers.authorization);
       let payload = jwt.verify(req.headers['authorization'].split(' ')[1],process.env.PRIVATE_KEY)
-      console.log(payload);
       let token  =jwt.sign(payload.user,process.env.PRIVATE_KEY,{expiresIn:'7h'})
       req.headers['authorization']=`Bearer ${token}`
-      console.log( req);
       next()
     } catch (error) {
       next(error)
@@ -49,5 +46,5 @@ const refreshToken=(req,res,next)=>{
 module.exports={
   checkInstructor,
   authinticationMW,
-  refreshToken
+  refreshToken,
 }

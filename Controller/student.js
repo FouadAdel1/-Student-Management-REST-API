@@ -59,6 +59,7 @@ async function deleteStudnet(req,res,next){
 }
 async function getStudnetById(req,res,next){
     try {
+        console.log(req.session.passport);
         let result = await StudentSchema.findOne({id:req.params.id})
         .populate({path:'departmentId', foreignField: 'id'}).exec()
         if(result){
