@@ -6,8 +6,8 @@ const {insertDapartmentValidation ,updateDapartmentValidation
 const {checkValidation} = require('../core/validation/checkValidation.js');
 const AuthMiddleWare= require('../MiddleWare/auth/auth.js')
 
-    departmentRoutes.route('/departments').all(AuthMiddleWare.checkInstructor)
-    .get(AuthMiddleWare.refreshToken,departmentContreller.getAllDepartments)
+    departmentRoutes.route('/departments')
+    .get(departmentContreller.getAllDepartments)
     .post( departmentContreller.addDepartment)
     .put( updateDapartmentValidation,checkValidation,departmentContreller.updateDepartment)
     .delete(deleteDapartmentValidation , checkValidation,departmentContreller.deleteDepartment)

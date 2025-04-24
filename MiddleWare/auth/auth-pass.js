@@ -1,12 +1,12 @@
 
 const mongoose = require('mongoose')
-const userSchema = mongoose.model('students')
+const userSchema = mongoose.model('users')
 const passport = require('passport')
 // const {Strategy} = require('passport-local')
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-passport.serializeUser((userId,done)=>{
+passport.serializeUser((user,done)=>{
   try {
-    userId ? done(null,userId) : done(new Error('User not found'))
+    user ? done(null,user.id) : done(new Error('User not found'))
   } catch (error) {
     done(error)
   }
@@ -15,7 +15,7 @@ passport.serializeUser((userId,done)=>{
 
 passport.deserializeUser((userId, done) =>{
 try {
-  console.log("test deserializeUser",userId);
+  console.log("test deserializeUser",user);
   userId ? done(null,userId) : done(new Error('User not found'))
 } catch (error) {
   done(error)
@@ -37,9 +37,16 @@ try {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:5000/auth/google/callback"
-},(accessToken, refreshToken, profile, done)=>{
+  callbackURL: "http://localhost:5000/auth/google/redirect"
+},async(accessToken, refreshToken, profile, done)=>{
   console.log('passport use google',accessToken ,"refreshToken",refreshToken, "profile",profile);
-  return done(null, profile);
+  const user = await userSchema.findOne({id:profile.id})
+  if(!user){
+    const newUser = await userSchema.create({
+      id:profile.id,
+    })
+    return done(null, profile)
+  }
+  return done(null, profile)
 }))
 module.exports= passport

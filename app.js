@@ -8,6 +8,7 @@ const departmentRoutes = require('./Routes/department.js');
 const studentRoutes = require('./Routes/student.js');
 const authRoutes=require("./Routes/auth.js")
 const {authinticationMW}= require('./MiddleWare/auth/auth.js');
+const {auth02nticationMW}= require('./Controller/authHandeller.js');
 const studentController= require('./Controller/student.js')
 var fs = require('fs')
 var morgan = require('morgan')
@@ -18,6 +19,7 @@ var session = require('express-session')
 var parseurl = require('parseurl')
 var passport = require('passport')
  const app = express()  ;
+ const MongoStore = require('connect-mongo');
 
  app.listen(port, (err) => {
   console.log("server listen on port ",port);
@@ -28,6 +30,9 @@ var passport = require('passport')
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
+  store: MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/project',
+  }),
   cookie: { maxAge: 1000 * 60 * 60}, // 1 hour
 }))
   //parse the body of request of form data without file to upload 
@@ -36,13 +41,10 @@ app.use(session({
   if (!req.session.views) {
     req.session.views = {}
   }
-
   // get the url pathname
   var pathname = parseurl(req).pathname
-
   // count the views
   req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
-
   next()
 })
 //  ******* midlleware for logs******************
@@ -61,14 +63,16 @@ app.use(authRoutes)
 // app.use((req,res,next)=>{
 // req.isAuthenticated() ? next() : res.status(401).json({message:"check passport Middleware"})
 // } )
+
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile'] }));
-  app.get('/auth/google/callback', 
+  app.get('/auth/google/redirect', 
     passport.authenticate('google', { failureRedirect: '/login' }),
     function(req, res) {
       // Successful authentication, redirect home.
       res.redirect('/students');
     });
+    app.use(auth02nticationMW)
 app.get('/students/:id',studentController.getStudnetById)
 
 // app.use(authinticationMW)

@@ -1,10 +1,11 @@
+require('../Model/session')
 const mongoose= require('mongoose')
 var jwt = require('jsonwebtoken');
 const { token } = require('morgan');
 
 const studentSchema=mongoose.model('students')
 const departmentSchema= mongoose.model('departments')
-
+const userSchema= mongoose.model('users')
 
 const loginHandeller =async  (req,res,next)=>{
   try {
@@ -45,8 +46,24 @@ try {
   next(error)
 }
 }
-
+const auth02nticationMW=async(req,res,next)=>{
+  try {
+    if(req.user ){
+      // req.session.passport.user.id
+      const user =await  userSchema.findOne({ id: req.user})
+      if(!user) return res.status(401).json({message:"session is not expired"})
+      next()
+    }else{
+      let error= new Error ("you are not authenticated")
+      error.status=403
+      next(error)
+    }
+  } catch (error) {
+    next(error)
+  }
+}
 module.exports={
   loginHandeller,
-  registerHandller
+  registerHandller,
+  auth02nticationMW
 }
