@@ -21,9 +21,12 @@ var passport = require('passport')
  const app = express()  ;
  const MongoStore = require('connect-mongo');
 
+
  app.listen(port, (err) => {
   console.log("server listen on port ",port);
  })
+
+
  //parse the body of request of json 
  app.use(express.json());
 //  app.use(cookieParser('secret')) // 🔥 Secret is used to sign the cookie
@@ -64,15 +67,15 @@ app.use(authRoutes)
 // req.isAuthenticated() ? next() : res.status(401).json({message:"check passport Middleware"})
 // } )
 
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] }));
-  app.get('/auth/google/redirect', 
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function(req, res) {
-      // Successful authentication, redirect home.
-      res.redirect('/students');
-    });
-    app.use(auth02nticationMW)
+// app.get('/auth/google',
+//   passport.authenticate('google', { scope: ['profile'] }));
+//   app.get('/auth/google/redirect', 
+//     passport.authenticate('google', { failureRedirect: '/login' }),
+//     function(req, res) {
+//       // Successful authentication, redirect home.
+//       res.redirect('/students');
+//     });
+    // app.use(auth02nticationMW)
 app.get('/students/:id',studentController.getStudnetById)
 
 // app.use(authinticationMW)

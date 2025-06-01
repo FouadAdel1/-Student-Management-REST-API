@@ -1,6 +1,6 @@
 require('../Model/department');
 const departmentSchema = require('mongoose').model('departments')
-
+const redisClient = require('../config/connectRedis.js')
 async function getAllDepartments(req,res,next){
     try {
         let data = await departmentSchema.find({})
@@ -64,11 +64,23 @@ async function deleteDepartment(req,res,next){
 }
 async function getDepartmentById(req,res,next){
     try {
-        console.log(req.session);
-        console.log(req.session.id);
         let  id = req.params.id
-        let result = await departmentSchema.findOne({id}).exec()
-        res.status(200).json(result);
+        // check if the data is in redis or not
+        let redisData = await redisClient.get(id)
+        if (redisData) {
+            console.log("in redis");
+            return res.status(200).json(JSON.parse(redisData))
+        }else{
+            console.log("not in redis");
+            let result = await departmentSchema.findOne({id}).exec()
+            let dataCashed = JSON.stringify(result)
+             let redisData = await redisClient.set(id, dataCashed,{
+                EX: 60 * 60, // 1 hour
+                NX: true, })
+             if(!redisData) 
+                throw new Error('error in redis')
+            return res.status(200).json(result)
+        }
     } catch (error) {
         next(error)
     }
