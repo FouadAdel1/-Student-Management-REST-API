@@ -1,0 +1,51 @@
+name: SonarCloud PR Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]  # analyze main too
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # needed for PR decoration
+      id-token: write        # for SonarCloud in some setups
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # IMPORTANT for accurate blame/PR analysis
+
+      # ----- Choose your runtime(s). Remove what you don't use. -----
+
+      # Node/TypeScript example (with coverage)
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: npm ci
+      - name: Test with coverage
+        run: npm test -- --coverage --watch=false
+
+      # Java/Maven example (uncomment if using Java)
+      # - name: Set up JDK
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     distribution: 'temurin'
+      #     java-version: '17'
+      # - name: Build & test with coverage
+      #   run: mvn -B -DskipTests=false test
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=your_org_yourrepo
+            -Dsonar.organization=your_org
+            -Dsonar.host.url=https://sonarcloud.io
