@@ -47,5 +47,5 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=fouadadel1
-            -Dsonar.organization=Fouad Atallah
+            -Dsonar.organization='Fouad Atallah'
             -Dsonar.host.url=https://sonarcloud.io
