@@ -10,7 +10,6 @@ const authRoutes=require("./Routes/auth.js")
 const {authinticationMW}= require('./MiddleWare/auth/auth.js');
 const {auth02nticationMW}= require('./Controller/authHandeller.js');
 const studentController= require('./Controller/student.js')
-
 var fs = require('fs')
 var morgan = require('morgan')
 var path = require('path')
@@ -21,8 +20,7 @@ var parseurl = require('parseurl')
 var passport = require('passport')
  const app = express()  ;
  const MongoStore = require('connect-mongo');
-
-
+rwerwerwe
  app.listen(port, (err) => {
   console.log("server listen on port ",port);
  })
